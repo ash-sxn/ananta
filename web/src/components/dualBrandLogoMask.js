@@ -63,7 +63,7 @@ class DualBrandLogoMask {
       <!-- Ananta Container -->
       <div class="ananta-container">
         <div class="logo-wrapper">
-          <img src="/logos/ananta.svg" alt="अनंता" class="ananta-logo">
+          <img src="/logos/ananta.svg" alt="Project Ananta" class="ananta-logo">
         </div>
         <div class="project-subtitle">Luxury Service Apartments</div>
       </div>
@@ -457,3 +457,4 @@ class DualBrandLogoMask {
 }
 
 export default DualBrandLogoMask
+

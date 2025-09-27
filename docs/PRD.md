@@ -1,83 +1,158 @@
-# Project Ananta – Landing-Page Redesign  
-**Version:** 0.1   **Date:** 05-Jul-2025  
+# Project Ananta Website PRD
+
+## 1. Product Summary
+- **Vision:** Present Global One Consulting's Project Ananta as a modern, luxurious brand experience with cinematic storytelling, while capturing qualified leads through a streamlined contact flow.
+- **Problem:** The legacy static site is visually dated, animation-heavy but inconsistent, and disconnected from the Express backend forms. Content is duplicated and contains encoding issues.
+- **Solution:** Consolidate on the Vite + GSAP experience with a refined narrative, guided entrance sequence, performant motion system, and reliable contact data pipeline.
+
+## 2. Target Audiences
+- **Primary:** High net-worth individuals & institutional buyers evaluating premium service apartments.
+- **Secondary:** Channel partners, brokers, and investors seeking project credentials and assets.
+- **Tertiary:** Internal sales & marketing teams needing dashboards/exportable lead data.
+
+## 3. Experience Principles
+1. **Immersive Luxury:** Blend cinematic motion, gold-on-dark palette, and responsive typography.
+2. **Purposeful Motion:** Every animation communicates state (entry reveal, thematic transitions, scroll cues).
+3. **Clarity & Trust:** Highlight credentials, RERA approval, amenities, and investment benefits.
+4. **Performance First:** Maintain 60fps across desktop/tablet; gracefully degrade for low-power devices.
+5. **Accessible Interaction:** Custom cursor and animations must remain keyboard-friendly and respect reduced motion settings.
+
+## 4. Scope & Feature Breakdown
+### 4.1 Entry Experience
+- Two-stage dual-logo mask (Global One -> Ananta) with click/scroll unlock.
+- Custom cursor active during mask; fallback for touch/reduced motion.
+- Smooth transition into main navigation and hero.
+
+### 4.2 Landing Page Sections
+1. **Hero:** Video background with day/dusk/night themes, parallax overlays, CTA.
+2. **Stats:** Counters & infographic-style highlights tied to scroll.
+3. **About:** Storytelling reveal with iconography and copy from legacy doc.
+4. **Amenities:** Interactive horizontal/vertical carousel with GSAP transitions.
+5. **Location:** Leaflet map, transport highlights, downloadable brochure.
+6. **Testimonials / Investors:** Marquee or slider with quotes.
+7. **Our Group:** Showcase dual-brand narrative; highlight key projects.
+8. **Contact:** Form with validation, success/fail states, and lead magnet downloads.
+9. **Footer:** Navigation shortcuts, social proof, compliance info.
+
+### 4.3 Supporting Components
+- Sticky navigation with theme-sensitive styling.
+- Theme transition HUD (e.g., dawn/day/dusk/night indicator).
+- Download center (catalog, investment plan, brochures) tied to contact captures.
+- Optional chatbot: Evaluate integration vs. removal; if retained, modernize UI and messaging.
+
+## 5. Content Strategy
+- Migrate relevant copy from legacy `index.html`, PDF, and verification scripts.
+- Standardize tone (luxury, confident, informative) and remove placeholder text.
+- Replace corrupted characters; ensure assets use UTF-8 and SVGs compress cleanly.
+- Prepare content matrix covering headline, subcopy, CTA, supporting media per section.
+
+## 6. Technical Approach
+### 6.1 Frontend
+- Stack: Vite, ES Modules, Tailwind, GSAP (ScrollTrigger, custom timelines), Lenis smooth scroll.
+- Remove legacy root static files (`index.html`, `script.js`, `chatbot.js`) after migration; serve built assets from `web/dist`.
+- Modular architecture (`components/`, `sections/`, `animations/`, `utils/`) retained with improved documentation and tests.
+- Ensure responsive breakpoints (mobile, tablet, desktop) and hydration-safe behavior.
+
+### 6.2 Backend
+- Express server continues handling `/api` routes; align static middleware to Vite build output.
+- Update contact schema to allow freeform inquiry while capturing intent (add `interestType`, `messageBody`).
+- Implement rate limiting + spam protection (Honey Pot, reCAPTCHA v3 optional).
+- Add admin routes to Express with proper session middleware, secure cookies, and CSV export leveraging `json2csv`.
+
+### 6.3 Infrastructure & Deployment
+- Target deployment on Vercel/Netlify for frontend; Render/Heroku/Atlas for backend + MongoDB Atlas.
+- Set up environment variables for admin credentials, Mongo URI, optional email integrations (SendGrid).
+- CI pipeline (GitHub Actions) to run lint/test/build before deploy.
+
+## 7. Integrations & Data Flow
+1. **Contact submissions:** `POST /api/contact` -> Mongo collection -> optional email notification -> admin dashboard.
+2. **Downloads:** Gate PDFs via API or signed URLs; log interaction events.
+3. **Analytics:** Integrate GA4 or Plausible for entry mask completion, section dwell time, conversion funnel.
+4. **Third-party embeds:** Leaflet map, possible video hosting (MP4 in CDN, fallback static).
+
+## 8. Accessibility & Compliance
+- Conform to WCAG 2.1 AA: focus states, color contrast, alt text, aria labels, keyboard operability.
+- Provide reduced motion mode (respect `prefers-reduced-motion` in GSAP timelines).
+- Localize static copy for potential Hindi support (future phase); ensure fonts support glyphs.
+- Cookie/privacy notice if analytics or tracking pixels are used.
+
+## 9. Performance Requirements
+- LCP < 2.5s on 4G mid-tier devices.
+- Bundle splitting and lazy loading for heavy assets (videos, map).
+- Use GSAP matchMedia for responsive timelines; pause animations off-screen.
+- Preload critical fonts, compress SVG/video, leverage caching headers.
+
+## 10. SEO Guidelines
+- Semantic HTML structure with heading hierarchy.
+- Meta tags per section, Open Graph, structured data (RealEstateProject schema if applicable).
+- Friendly URLs (hash anchors for sections), sitemap, robots.
+- Server-rendered fallback for primary content (consider SSR or pre-render for marketing pages).
+
+## 11. Risks & Mitigations
+| Risk | Impact | Mitigation |
+|------|--------|-----------|
+| Animation overload harms performance | High | Performance budget, profiling, fallback states |
+| Contact schema change breaks admin tools | Medium | Versioned API, migration script, tests |
+| Asset licensing for videos/fonts | Medium | Confirm usage rights, host internally |
+| Dual-brand mask frustrates repeat visitors | Medium | Offer skip/remember choice via localStorage |
+| Mongo availability in production | High | Use managed Atlas tier, add retry logic |
+
+## 12. Roadmap & Milestones
+1. **Week 1:** Discovery refresh, finalize PRD & brand narrative, asset audit.
+2. **Week 2:** Design system updates, animation storyboard, content rewrite.
+3. **Week 3:** Implement entry mask, navigation, hero, theme system refinements.
+4. **Week 4:** Build remaining sections, contact form integration, admin dashboard.
+5. **Week 5:** QA, accessibility & performance tuning, analytics wiring, deployment prep.
+
+## 13. Detailed TODO Checklist
+### General
+- [ ] Remove legacy root static site files after migration confirmation.
+- [ ] Normalize repository structure; root serves Express API + Vite build only.
+- [ ] Audit and replace corrupted characters across assets and copy.
+
+### UX & Content
+- [ ] Draft updated copy deck per section with brand-approved tone.
+- [ ] Select/produce hero and amenities media (video loops, imagery).
+- [ ] Define downloadable assets (catalog, investment plan, brochures) and gating logic.
+- [ ] Prepare style guide: typography scale, color tokens, component states.
+
+### Frontend Implementation
+- [ ] Refine dual-brand entry mask UX (skip logic, reduced motion fallback).
+- [ ] Rebuild navigation component with clean SVG assets and accessible menus.
+- [ ] Implement hero with video manager integration and theme transitions.
+- [ ] Port stats/about/amenities sections with modern layouts and scroll presets.
+- [ ] Build location section with Leaflet map and highlight cards.
+- [ ] Implement testimonials/our group modules with data-driven configs.
+- [ ] Rebuild contact form with inline validation and success animations.
+- [ ] Decide on chatbot future; either redesign or sunset with graceful removal.
+
+### Animations & Interaction
+- [ ] Audit existing GSAP timelines; convert to preset-driven architecture where helpful.
+- [ ] Add theme transition triggers connected to scroll progress and time of day.
+- [ ] Validate Lenis + ScrollTrigger sync, add pause on reduced motion.
+- [ ] Instrument performance profiling (GSAP devtools or custom timing logs).
+
+### Backend & Data
+- [ ] Update `ContactSubmission` schema to accept freeform message + interest type.
+- [ ] Align frontend fetch to `/api/contact` and handle response codes properly.
+- [ ] Implement server-side validation, rate limiting, and spam protection.
+- [ ] Wire admin router with session store, login, dashboard, CSV export.
+- [ ] Optional: integrate transactional email for new submissions.
+
+### QA & Launch
+- [ ] Write Vitest tests for critical utilities (theme transitions, animation controller config).
+- [ ] Add end-to-end smoke tests (Playwright/Cypress) for entry mask and form.
+- [ ] Create performance checklist (Lighthouse, WebPageTest) with thresholds.
+- [ ] Verify accessibility via axe/lighthouse and manual keyboard testing.
+- [ ] Prepare deployment pipeline and environment configuration documentation.
+
+## 14. Open Questions
+- Should repeat visitors bypass the full entry mask automatically?
+- Is chatbot a requirement or should we channel users to human-assisted contact?
+- Are there CRM integrations (HubSpot, Zoho) expected for leads?
+- Any multilingual requirements beyond English in the current phase?
+- Preferred deployment split (single full-stack deployment vs. separate frontend/backend)?
 
 ---
-## 1  Project Goal
-Deliver a modern, performant, single-page marketing site for *Project Ananta* (luxury construction venture). The new site must:
-
-* Re-use/refresh existing copy & assets.
-* Embrace a white-background / black-content visual identity.
-* Feature smooth, on-scroll animations (Lenis + GSAP), text splitting and dynamic sections inspired by *heights.agency* & *ventriloc.ca*.
-* Be fully responsive with a single code-base (Tailwind break-points).
-* Achieve Lighthouse ≥ 90 on performance, a11y & best-practices.
-
----
-## 2  Key Pages / Sections
-| Status | # | Section | Content Source (old site) | New Animation / Interaction |
-|---|---------|--------------------------|-----------------------------|
-| [ ] | 1 | **Splash / Pre-loader** | `<section id="splash-screen">` (Ananta Devanagari headline & ring video) | Fade-in logo + GSAP SplitText letter stagger, then auto-scroll cue. Lenis paused until imagesLoaded complete. |
-| [ ] | 2 | **Hero** | Headline: “Luxury Service Apartments in Lucknow” (implied); CTA “Know More” | Parallax background image (scale 1.2 → 1) & headline slide-up on page load. |
-| [ ] | 3 | **Stats Counters** | `.counter-value` elements (₹ investment, units sold, etc.) | Count-up once 35 % visible via IntersectionObserver. Sticky on wide screens. |
-| [ ] | 4 | **About / Highlights** | `<section id="about">` lists 5 Towers, 800 units, etc. | Split 2-column; left text block scroll-reveals list items. Sticky asset on right that cross-fades images. |
-| [ ] | 5 | **Amenities** | Grid of 18 + amenity images (old “amenities-wrapper”). | Pinned horizontal scroll (desktop) using Lenis + ScrollTrigger; simple vertical masonry on mobile. |
-| [ ] | 6 | **Testimonials** | Cards with name, role, quote. | Infinite marquee built with GSAP `to({x:"-=50%"})` + hover-pause. |
-| [ ] | 7 | **Location** | Copy + Map placeholder video. | Embed Mapbox GL with grayscale tiles; fade-in pins as they enter view. |
-| [ ] | 8 | **Contact** | Name, email, phone, message form (posts to Express route). | Floating-label inputs; GSAP shake on invalid submit; success modal. |
-| [ ] | 9 | **Our Group** | Logos of 10 group companies. | Grid zoom-in on hover; IntersectionObserver fade-in sequence. |
-| [ ] | 10 | **Utility** | Scroll-to-top button, chatbot toggle. | Button scales in after hero; chatbot slides from bottom-left. |
-
----
-## 3  Technical Stack
-* **Build & Dev:** Vite 5 + ESM.  
-* **Styling:** Tailwind CSS 3.4 (`@tailwind base/components/utilities`).  
-* **Typography:** Google Fonts `Montserrat` & `Tiro Devanagari Hindi`.  
-* **Smooth Scroll:** `@studio-freight/lenis`.  
-* **Animations:** GSAP 3 (Core, ScrollTrigger, SplitText) + SplitType fallback.  
-* **Viewport Detection:** Native Intersection Observer.  
-* **Images:** `<picture>` with AVIF/WebP + lazy `loading="lazy"`.  
-* **Forms:** Fetch to existing Express `/contact` route, with client-side validation (Zod).  
-* **Deployment:** Vercel (project root `/web`).
-
----
-## 4  Responsive & Accessibility Requirements
-1. **Break-points:** `sm` ≥ 640 px, `md` ≥ 768 px, `lg` ≥ 1024 px, `xl` ≥ 1280 px.  
-2. Keyboard navigable; `prefers-reduced-motion` disables heavy scroll animations.  
-3. Color contrast ≥ 4.5:1 for text on white (#000 on #FFF).  
-4. Alt tags on all images; aria-labels on interactive controls.
-
----
-## 5  Performance Targets
-| Metric | Target |
-|--------|--------|
-| Largest Contentful Paint (LCP) | ≤ 2.5 s |
-| Total Blocking Time (TBT) | ≤ 150 ms |
-| Cumulative Layout Shift (CLS) | ≤ 0.1 |
-| First Input Delay (FID) | ≤ 100 ms |
-
----
-## 6  Open Questions / Notes
-1. Will SplitText commercial license be procured, or use SplitType?  
-2. Final copy for hero tagline & counter values?  
-3. Exact list of amenities to keep (current list is 18).  
-4. Mapbox API key availability.  
-5. Contact form backend stays in existing Express app—OK?
-
----
-## 7  Timeline (Draft)
-| Week | Milestone |
-|------|-----------|
-| 1 | Project setup, Tailwind theme, Lenis/GSAP integration, Splash + Hero done. |
-| 2 | About, Counters, Amenities (desktop & mobile variants). |
-| 3 | Testimonials, Location (Mapbox), Our Group grid. |
-| 4 | QA, a11y pass, Lighthouse tuning, content freeze. |
-| 5 | Client review, tweaks, launch preparation. |
-
----
-## 8  Glossary of Terms
-* **Lenis:** JS library providing virtualized, smooth scrolling.  
-* **ScrollTrigger:** GSAP plugin linking scroll position to animation timeline.  
-* **SplitText / SplitType:** Libraries that convert text into individually animatable spans.  
-* **Pinned Section:** A block that remains fixed while the rest of the page scrolls.
-
----
-*End of PRD*
+**Owner:** Manak Shankar (Global One Consulting)  
+**Maintainers:** Web experience team & marketing stakeholders
