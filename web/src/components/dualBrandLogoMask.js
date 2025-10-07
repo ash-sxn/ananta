@@ -36,7 +36,7 @@ class DualBrandLogoMask {
     this.setupDualBrandTimeline()
     this.startEntrySequence()
     
-    console.log('🎭 Dual Brand Logo Mask initialized')
+    console.log('=�ġ Dual Brand Logo Mask initialized')
   }
 
   createMaskElements() {
@@ -300,7 +300,7 @@ class DualBrandLogoMask {
       yoyo: true
     })
     
-    console.log('🎭 Dual brand timeline complete - ready for user interaction')
+    console.log('=�ġ Dual brand timeline complete - ready for user interaction')
   }
 
   startExpandingReveal() {
@@ -309,7 +309,7 @@ class DualBrandLogoMask {
     this.isAnimating = true
     this.currentPhase = 'expanding'
     
-    console.log('🎭 Starting expanding circle reveal')
+    console.log('=�ġ Starting expanding circle reveal')
     
     // Create expanding reveal timeline
     const revealTimeline = gsap.timeline({
@@ -348,7 +348,7 @@ class DualBrandLogoMask {
   }
 
   revealMainSite() {
-    console.log('🎭 Revealing main site')
+    console.log('=�ġ Revealing main site')
     
     // Fade out mask and reveal main content
     gsap.to('.dual-brand-entry-mask', {
@@ -382,7 +382,7 @@ class DualBrandLogoMask {
     this.hasCompleted = true
     this.currentPhase = 'complete'
     
-    console.log('🎭 Dual brand logo mask cleanup complete')
+    console.log('=�ġ Dual brand logo mask cleanup complete')
   }
 
   initMainSiteAnimations() {
@@ -399,14 +399,14 @@ class DualBrandLogoMask {
     // Add loaded class to body for CSS transitions
     document.body.classList.add('dual-brand-complete')
     
-    console.log('🎭 Main site animations initialized')
+    console.log('=�ġ Main site animations initialized')
   }
 
   // Public methods for external control
   skip() {
     if (this.hasCompleted) return
     
-    console.log('🎭 Skipping dual brand intro')
+    console.log('=�ġ Skipping dual brand intro')
     
     // Kill current timeline
     if (this.timeline) {

@@ -280,7 +280,7 @@ const projects = [
             caption: "Arrival plaza for the medical boulevard",
           },
           {
-            src: "/images/gate 2.jpg",
+            src: "/images/Gate 2.jpg",
             alt: "Daylit atrium leading to diagnostics wing",
             caption: "Daylit atrium linking retail and diagnostics",
           },
@@ -367,6 +367,81 @@ const projects = [
   },
 ];
 
+const prefersReducedMotion = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const safeScrollTo = (targetSelector) => {
+  const el =
+    typeof targetSelector === "string"
+      ? document.querySelector(targetSelector)
+      : targetSelector;
+  if (!el) return;
+  el.scrollIntoView({
+    behavior: prefersReducedMotion() ? "auto" : "smooth",
+    block: "start",
+  });
+};
+
+const createReveals = () => {
+  const elements = document.querySelectorAll("[data-reveal]");
+  if (!elements.length) return () => {};
+  if (prefersReducedMotion()) {
+    elements.forEach((node) => node.classList.add("reveal-visible"));
+    return () => {};
+  }
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("reveal-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.18, rootMargin: "0px 0px -10% 0px" },
+  );
+  elements.forEach((node) => observer.observe(node));
+  return () => observer.disconnect();
+};
+
+const observeThemes = () => {
+  const sections = Array.from(document.querySelectorAll("[data-project]"));
+  if (!sections.length) return () => {};
+  const body = document.body;
+  const focusPoint = () => window.innerHeight * 0.35;
+  const applyTheme = () => {
+    const point = focusPoint();
+    const active = sections.find((section) => {
+      const rect = section.getBoundingClientRect();
+      return rect.top <= point && rect.bottom >= point;
+    });
+    const lastSection = sections[sections.length - 1];
+    let target = active;
+    if (!target && lastSection) {
+      const lastRect = lastSection.getBoundingClientRect();
+      target = lastRect.bottom < point ? lastSection : sections[0];
+    }
+    const theme = target?.dataset.theme || "dark";
+    body.classList.toggle("theme-light", theme === "light");
+  };
+  const io = new IntersectionObserver(() => applyTheme(), {
+    threshold: [0, 0.25, 0.5, 0.75, 1],
+  });
+  sections.forEach((section) => io.observe(section));
+  const handleScroll = () => applyTheme();
+  const handleResize = () => applyTheme();
+  applyTheme();
+  window.addEventListener("scroll", handleScroll, { passive: true });
+  window.addEventListener("resize", handleResize);
+  return () => {
+    io.disconnect();
+    window.removeEventListener("scroll", handleScroll);
+    window.removeEventListener("resize", handleResize);
+  };
+};
+
 const renderNav = () => {
   const nav = document.createElement("nav");
   nav.className = "nav";
@@ -385,33 +460,37 @@ const renderNav = () => {
           <span class="nav__brand-tagline">Branding | Consulting | Investing</span>
         </span>
       </a>
-      <button class="nav__toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="navLinks">
+      <button class="nav__toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="primary-nav">
         <span class="sr-only">Toggle navigation</span>
         <span class="nav__toggle-bar"></span>
         <span class="nav__toggle-bar"></span>
         <span class="nav__toggle-bar"></span>
       </button>
-      <div class="nav__links" id="navLinks">
+      <div class="nav__links" id="primary-nav" role="navigation" aria-label="Primary">
         ${navItems
           .map(
             (item) =>
-              `<a href="${item.target}" class="nav__link" data-scroll data-nav-link>${item.label}</a>`,
+              '<a class="nav__link" href="' +
+              item.target +
+              '" data-scroll>' +
+              item.label +
+              '</a>',
           )
           .join("")}
       </div>
       <div class="nav__actions">
-        <a href="#contact" class="nav__cta btn btn--small" data-scroll>Talk to us</a>
+        <a class="btn btn--small" href="#contact" data-scroll>Enquire</a>
       </div>
     </div>
   `;
-  document.body.appendChild(nav);
+  document.body.prepend(nav);
 };
 
 const renderGlobalHero = () => `
-  <section id="top" class="section global-hero" data-reveal>
-    <div class="container global-hero__inner">
+  <section id="top" class="section global-hero">
+    <div class="container global-hero__inner" data-reveal>
       <div class="global-hero__copy">
-        <p class="global-hero__eyebrow">Global One</p>
+        <p class="global-hero__eyebrow">Integrated Destinations</p>
         <h1 class="global-hero__title">Designing destinations that blend hospitality, commerce, and community.</h1>
         <p class="global-hero__lead">
           From luxury service apartments to integrated medical townships, Global One curates experiences that elevate everyday living and unlock long-term value for investors and residents alike.
@@ -619,12 +698,30 @@ class GlobalOneApp {
 
   init() {
     renderNav();
-    renderSections();
+    try {
+      renderSections();
+    } catch (error) {
+      console.error("Render sections failed", error);
+      const fallback = document.createElement("pre");
+      fallback.textContent = `Render error: ${error?.stack || error}`;
+      fallback.style.color = "#ff6b6b";
+      fallback.style.padding = "24px";
+      fallback.style.whiteSpace = "pre-wrap";
+      document.body.appendChild(fallback);
+      return;
+    }
     renderFooter();
     this.initHeroModel();
     this.setupForm();
     this.cleanupReveals = createReveals();
     this.cleanupTheme = observeThemes();
+    requestAnimationFrame(() => {
+      if (!document.querySelector("[data-reveal].reveal-visible")) {
+        document
+          .querySelectorAll("[data-reveal]")
+          .forEach((node) => node.classList.add("reveal-visible"));
+      }
+    });
     this.registerEvents();
     this.playIntro();
   }
@@ -739,3 +836,6 @@ window.addEventListener("DOMContentLoaded", () => {
   const app = new GlobalOneApp();
   app.init();
 });
+
+
+
