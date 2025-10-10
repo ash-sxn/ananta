@@ -2780,7 +2780,7 @@ const renderContactSection = () => `
 
 
 
-          <li><span>Email</span><a href="mailto:connect@globalone.co">connect@globalone.co</a></li>
+          <li><span>Email</span><a href="mailto:info@theglobaloneconsulting.com">info@theglobaloneconsulting.com</a></li>
 
 
 
@@ -2984,7 +2984,7 @@ const renderFooter = () => {
 
 
 
-        <a href="mailto:connect@globalone.co">connect@globalone.co</a>
+        <a href="mailto:info@theglobaloneconsulting.com">info@theglobaloneconsulting.com</a>
 
 
 
