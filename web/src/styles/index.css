@@ -610,6 +610,10 @@ textarea.input {
   font-size: 0.9rem;
   color: var(--muted);
 }
+.form__status.is-error {
+  color: #ff6b6b;
+}
+
 .footer {
   border-top: 1px solid var(--border);
   background: #0003;

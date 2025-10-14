@@ -410,7 +410,7 @@ const projects = [
 
 
 
-            caption: "Twin towers defining Ananta�s skyline",
+            caption: "Twin towers defining Ananta's skyline",
 
 
 
@@ -662,7 +662,7 @@ const projects = [
 
 
 
-            caption: "Round mall�s circular retail boulevard",
+            caption: "Round mall's circular retail boulevard",
 
 
 
@@ -2784,11 +2784,11 @@ const renderContactSection = () => `
 
 
 
-          <li><span>Phone</span><a href="tel:+919876543210">+91 98765 43210</a></li>
+          <li><span>Phone</span><a href="tel:+919897047582">+91 98970 47582</a></li>
 
 
 
-          <li><span>Office</span>Global One Consulting, Datia &amp; New Delhi</li>
+          <li><span>Office</span>Office 120, Ellora Enclave, Dayalbagh, Agra</li>
 
 
 
@@ -3320,98 +3320,63 @@ class GlobalOneApp {
 
 
   setupForm() {
-
-
-
     const form = document.getElementById("contactForm");
-
-
-
     const status = form ? form.querySelector("[data-status]") : null;
-
-
-
     if (!form || !status) return;
 
-
-
-
-
-
+    const submitButton = form.querySelector("[type='submit']");
+    const endpoint =
+      "https://formsubmit.co/ajax/info@theglobaloneconsulting.com";
 
     form.addEventListener("submit", async (event) => {
-
-
-
       event.preventDefault();
-
-
-
+      if (form.dataset.submitting === "true") return;
+      form.dataset.submitting = "true";
+      status.classList.remove("is-error");
       status.textContent = "Sending...";
-
-
+      if (submitButton) submitButton.disabled = true;
 
       const formData = new FormData(form);
-
-
-
-      const payload = Object.fromEntries(formData.entries());
-
-
-
-      try {
-
-
-
-        await new Promise((resolve) => setTimeout(resolve, 600));
-
-
-
-        status.textContent =
-
-
-
-          "Thank you. Our team will reach out within 24 hours.";
-
-
-
-        form.reset();
-
-
-
-        if (import.meta.env && import.meta.env.DEV) {
-
-
-
-          console.info("[GlobalOne] Contact form submission", payload);
-
-
-
-        }
-
-
-
-      } catch (_) {
-
-
-
-        status.textContent = "Please try again shortly.";
-
-
-
+      formData.append(
+        "_subject",
+        "New enquiry from the Global One website contact form",
+      );
+      formData.append(
+        "_autoresponse",
+        "Thank you for contacting Global One Consulting. Our team will reach out within 24 hours.",
+      );
+      formData.append("_template", "table");
+      const replyTo = formData.get("email");
+      if (replyTo) {
+        formData.append("_replyto", replyTo);
       }
 
-
-
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { Accept: "application/json" },
+          body: formData,
+        });
+        if (!response.ok) {
+          throw new Error(`Form submission failed with status ${response.status}`);
+        }
+        await response.json();
+        status.textContent =
+          "Thank you. Our team will reach out within 24 hours.";
+        form.reset();
+      } catch (error) {
+        status.textContent =
+          "We couldn't send your message right now. Please try again shortly.";
+        status.classList.add("is-error");
+        if (import.meta.env && import.meta.env.DEV) {
+          console.error("[GlobalOne] Contact form submission failed", error);
+        }
+      } finally {
+        form.dataset.submitting = "false";
+        if (submitButton) submitButton.disabled = false;
+      }
     });
-
-
-
   }
-
-
-
-
 
 
 
