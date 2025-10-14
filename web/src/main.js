@@ -2784,10 +2784,6 @@ const renderContactSection = () => `
 
 
 
-          <li><span>Phone</span><a href="tel:+919897047582">+91 98970 47582</a></li>
-
-
-
           <li><span>Office</span>Office 120, Ellora Enclave, Dayalbagh, Agra</li>
 
 
