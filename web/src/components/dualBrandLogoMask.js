@@ -3,7 +3,7 @@ import { gsap } from 'gsap'
 /**
  * Dual Brand Logo Entry Mask System
  * Implements Global One Consulting logo entrance with "Presents" transition
- * Creates smooth transition from Global One to Ananta branding
+ * Creates a single Global One brand entry experience
  * Adds click or scroll to enter functionality with expanding circle reveal
  * Integrates dual brand timeline with main site animation initialization
  */
@@ -11,7 +11,6 @@ class DualBrandLogoMask {
   constructor() {
     this.maskContainer = null
     this.globalOneContainer = null
-    this.anantaContainer = null
     this.expandingCircle = null
     this.clickToEnter = null
     this.isAnimating = false
@@ -19,7 +18,7 @@ class DualBrandLogoMask {
     this.hasCompleted = false
     
     // Animation states
-    this.currentPhase = 'initial' // initial, globalOne, presents, ananta, expanding, complete
+    this.currentPhase = 'initial' // initial, globalOne, presents, ready, expanding, complete
     
     // Bind methods
     this.handleClick = this.handleClick.bind(this)
@@ -59,15 +58,6 @@ class DualBrandLogoMask {
         <div class="company-text">Global One</div>
         <div class="presents-text">Presents</div>
       </div>
-      
-      <!-- Ananta Container -->
-      <div class="ananta-container">
-        <div class="logo-wrapper">
-          <img src="/logos/ananta.svg" alt="Project Ananta" class="ananta-logo">
-        </div>
-        <div class="project-subtitle">Luxury Service Apartments</div>
-      </div>
-      
       <!-- Expanding Circle Reveal -->
       <div class="expanding-circle"></div>
       
@@ -83,7 +73,6 @@ class DualBrandLogoMask {
     
     // Get references to key elements
     this.globalOneContainer = this.maskContainer.querySelector('.global-one-container')
-    this.anantaContainer = this.maskContainer.querySelector('.ananta-container')
     this.expandingCircle = this.maskContainer.querySelector('.expanding-circle')
     this.clickToEnter = this.maskContainer.querySelector('.click-to-enter')
     this.customCursor = this.maskContainer.querySelector('.dual-brand-cursor')
@@ -125,20 +114,20 @@ class DualBrandLogoMask {
   }
 
   handleClick() {
-    if (this.currentPhase === 'ananta' && !this.isAnimating) {
+    if (this.currentPhase === 'ready' && !this.isAnimating) {
       this.startExpandingReveal()
     }
   }
 
   handleKeyPress(e) {
-    if ((e.key === 'Enter' || e.key === ' ') && this.currentPhase === 'ananta' && !this.isAnimating) {
+    if ((e.key === 'Enter' || e.key === ' ') && this.currentPhase === 'ready' && !this.isAnimating) {
       e.preventDefault()
       this.startExpandingReveal()
     }
   }
 
   handleScroll() {
-    if (this.currentPhase === 'ananta' && !this.isAnimating) {
+    if (this.currentPhase === 'ready' && !this.isAnimating) {
       this.startExpandingReveal()
     }
   }
@@ -192,9 +181,6 @@ class DualBrandLogoMask {
     gsap.set('.company-text', { opacity: 0, y: 30 })
     gsap.set('.presents-text', { opacity: 0, y: 20 })
     
-    // Ananta elements
-    gsap.set('.ananta-container', { opacity: 0, scale: 0.8 })
-    gsap.set('.ananta-logo', { opacity: 0, scale: 0.8, rotation: 10 })
     gsap.set('.project-subtitle', { opacity: 0, y: 20 })
     
     // Other elements
@@ -238,37 +224,18 @@ class DualBrandLogoMask {
       
       // Hold presents
       .to({}, { duration: 1.2 })
-      
-      // Phase 3: Transition to Ananta
-      .to('.global-one-container', {
-        opacity: 0,
-        scale: 0.9,
-        y: -30,
-        duration: 0.8,
-        ease: "power2.in"
-      })
-      .to('.ananta-container', {
-        opacity: 1,
-        scale: 1,
-        duration: 1,
-        ease: "power2.out",
-        onStart: () => { this.currentPhase = 'ananta' }
-      }, "-=0.4")
-      .to('.ananta-logo', {
-        opacity: 1,
-        scale: 1,
-        rotation: 0,
-        duration: 1.4,
-        ease: "back.out(1.7)"
-      }, "-=0.6")
-      .to('.project-subtitle', {
+
+      // Make call-to-action available
+      .to('.click-to-enter', {
         opacity: 1,
         y: 0,
         duration: 0.8,
-        ease: "power2.out"
-      }, "-=0.8")
-      
-      // Phase 4: Show click to enter
+        ease: "power2.out",
+        onStart: () => {
+          this.currentPhase = 'ready'
+          this.announcePhase('ready')
+        }
+      })
       .to('.click-to-enter', {
         opacity: 1,
         y: 0,
@@ -285,7 +252,7 @@ class DualBrandLogoMask {
   onTimelineComplete() {
     this.isAnimating = false
     
-    // Show cursor only when Ananta phase is ready for interaction
+    // Show cursor only when intro sequence is ready for interaction
     if (this.customCursor) {
       this.customCursor.classList.add('show')
     }
@@ -326,6 +293,12 @@ class DualBrandLogoMask {
       })
       
       // Start expanding circle
+      .to('.global-one-container', {
+        opacity: 0,
+        scale: 0.9,
+        duration: 0.4,
+        ease: "power2.in"
+      })
       .to('.expanding-circle', {
         opacity: 1,
         scale: 0.1,
@@ -336,15 +309,8 @@ class DualBrandLogoMask {
         scale: 100,
         duration: 1.8,
         ease: "power2.inOut"
-      })
-      
-      // Fade out Ananta elements during expansion
-      .to('.ananta-container', {
-        opacity: 0,
-        scale: 1.1,
-        duration: 0.8,
-        ease: "power2.in"
-      }, "-=1.4")
+      }, "-=0.1");
+
   }
 
   revealMainSite() {
@@ -434,9 +400,9 @@ class DualBrandLogoMask {
     const announcements = {
       globalOne: 'Global One Consulting logo displayed',
       presents: 'Presents text shown',
-      ananta: 'Ananta project logo displayed, ready to enter',
+      ready: 'Intro complete, ready to enter the site',
       expanding: 'Transitioning to main website',
-      complete: 'Welcome to Ananta website'
+      complete: 'Welcome to the Global One experience'
     }
     
     // Create temporary announcement for screen readers

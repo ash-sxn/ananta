@@ -2380,118 +2380,36 @@ const renderNav = () => {
 
 
 const renderGlobalHero = () => `
-
-
-
   <section id="top" class="section global-hero">
-
-
-
     <div class="container global-hero__inner" data-reveal>
-
-
-
       <div class="global-hero__copy">
-
-
-
         <p class="global-hero__eyebrow">Integrated Destinations</p>
-
-
-
         <h1 class="global-hero__title">Designing destinations that blend hospitality, commerce, and community.</h1>
-
-
-
         <p class="global-hero__lead">
-
-
-
           From luxury service apartments to integrated medical townships, Global One curates experiences that elevate everyday living and unlock long-term value for investors and residents alike.
-
-
-
         </p>
-
-
-
         <div class="global-hero__cta">
-
-
-
           <a href="#ananta" class="btn" data-scroll>Explore Ananta</a>
-
-
-
           <a href="#medicity" class="btn btn--outline" data-scroll>Discover MediCity</a>
-
-
-
         </div>
-
-
-
         <ul class="global-hero__stats">
-
-
-
           <li><span>2</span> Flagship integrated projects</li>
-
-
-
           <li><span>5M sqft</span> Under development</li>
-
-
-
           <li><span>24/7</span> Managed hospitality operations</li>
-
-
-
         </ul>
-
-
-
       </div>
-
-
-
       <div class="global-hero__visual" data-hero-visual>
-
-
-
         <div class="hero-visual">
-
-
-
           <canvas class="hero-visual__canvas" data-hero-canvas aria-hidden="true"></canvas>
-
-
-
-          <div class="hero-visual__fallback" data-hero-fallback>Loading 3D preview...</div>
-
-
-
+          <div class="hero-visual__fallback" data-hero-fallback>
+            <img src="/images/t1.png" alt="Corporate tower rendered at night" loading="lazy" decoding="async" />
+            <span>Loading 3D preview...</span>
+          </div>
         </div>
-
-
-
       </div>
-
-
-
     </div>
-
-
-
   </section>
-
-
-
 `;
-
-
-
-
 
 
 
@@ -3235,26 +3153,6 @@ class GlobalOneApp {
 
 
 
-    const reduceMotion =
-
-
-
-      typeof window !== "undefined" && window.matchMedia
-
-
-
-        ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
-
-
-
-        : false;
-
-
-
-    if (reduceMotion) return;
-
-
-
     const container = document.querySelector("[data-hero-visual]");
 
 
@@ -3263,49 +3161,53 @@ class GlobalOneApp {
 
 
 
+    const reduceMotion =
+
+      typeof window !== "undefined" && window.matchMedia
+
+        ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
+        : false;
+
+    const isMobileViewport =
+
+      typeof window !== "undefined" ? window.innerWidth <= 640 : false;
+
+
+
+    if (reduceMotion || isMobileViewport) {
+
+      container.classList.add("hero-visual--fallback-only");
+
+      return;
+
+    }
+
+
+
     this.heroModelPromise = import("./components/heroModel.js")
-
-
 
       .then(({ default: HeroModel }) => {
 
-
-
         this.heroModelPromise = null;
-
-
 
         if (!container.isConnected || this.heroModel) return;
 
-
+        container.classList.remove("hero-visual--fallback-only");
 
         this.heroModel = new HeroModel(container);
 
-
-
       })
-
-
 
       .catch((error) => {
 
-
-
         this.heroModelPromise = null;
-
-
 
         if (import.meta.env && import.meta.env.DEV) {
 
-
-
           console.warn("Hero model failed to load", error);
 
-
-
         }
-
-
 
       });
 
